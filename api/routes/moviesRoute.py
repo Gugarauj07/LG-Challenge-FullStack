@@ -1,14 +1,20 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 import sqlite3
 
 movies_bp = Blueprint('movies', __name__)
 
-@movies_bp.route('/movies')
-def list_movies():
+# Teste: /movies?title=SeuTituloAqui
+
+@movies_bp.route('/movies', methods=['GET'])
+def list_movies_by_title():
+    title = request.args.get('title')
+    if not title:
+        return jsonify({'error': 'Title parameter is required'}), 400
+
     conn = sqlite3.connect('.../../movielens.db')
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM movies')
+    cursor.execute('SELECT * FROM movies WHERE title LIKE ?', ('%' + title + '%',))
     movies = cursor.fetchall()
 
     conn.close()
@@ -22,9 +28,4 @@ def list_movies():
         }
         movie_list.append(movie_dict)
     return jsonify(movie_list)
-
-@movies_bp.route('/movies/<int:movie_id>')
-def get_movie(movie_id):
-    # Coloque o código para obter um filme específico aqui
-    return jsonify({'message': f'Movie with ID {movie_id}'})
 
