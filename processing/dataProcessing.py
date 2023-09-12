@@ -8,6 +8,10 @@ genomeTags_df = pd.read_csv('./ml-25m/genome-tags.csv')
 tags_df = pd.read_csv('./ml-25m/tags.csv')
 links_df = pd.read_csv('./ml-25m/links.csv')
 
+movies_df['year'] = movies_df['title'].str.extract(r'\((\d{4})\)$')
+movies_df['title'] = movies_df['title'].str.replace(r'\(\d{4}\)', '', regex=True).str.strip()
+# print(movies_df['title'])
+
 conn = sqlite3.connect('../movielens.db')
 
 movies_df.to_sql('movies', conn, if_exists='replace', index=False)
