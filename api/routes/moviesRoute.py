@@ -27,10 +27,10 @@ def list_movies_by_title():
         cursor.execute('SELECT * FROM movies WHERE year = ? AND genres LIKE ?', (year, ('%'+genre+'%')))
     elif top:
         # SELECT m.title, AVG(r.rating) AS avg_rating FROM movies AS m LEFT JOIN ratings AS r ON m.movieId = r.movieId GROUP BY m.title ORDER BY avg_rating DESC LIMIT 10;
-        cursor.execute(f"""SELECT m.movieId, m.title, r.mean AS avg_rating, r.count AS num_rating
+        cursor.execute(f"""SELECT m.movieId, m.title, r.mean AS avg_rating, r.count AS num_rating, r.popularity_score
                             FROM movies as m
                             LEFT JOIN avgRatings AS r ON m.movieId = r.movieId
-                            ORDER BY mean DESC
+                            ORDER BY popularity_score DESC
                             LIMIT {top};""")
 
     movies = cursor.fetchall()
@@ -42,8 +42,13 @@ def list_movies_by_title():
         movie_dict = {
             'id': movie[0],
             'title': movie[1],
-            'rating' if top else 'year': movie[2],
+            'avg_rating' if top else 'year': movie[2],
         }
+        if top:
+            movie_dict.update({
+                'num_rated': movie[3],
+                'popularity_score': movie[4]
+            })
         movie_list.append(movie_dict)
     return jsonify(movie_list)
 
