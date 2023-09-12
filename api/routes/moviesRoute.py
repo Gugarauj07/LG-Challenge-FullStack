@@ -3,18 +3,27 @@ import sqlite3
 
 movies_bp = Blueprint('movies', __name__)
 
-# Teste: /movies?title=SeuTituloAqui
+# Teste: /movies?title=Toy Story
+# Teste: /movies?year=1995&genres=Adventure
 
 @movies_bp.route('/movies', methods=['GET'])
 def list_movies_by_title():
     title = request.args.get('title')
-    if not title:
-        return jsonify({'error': 'Title parameter is required'}), 400
+    year = request.args.get('year')
+    genre = request.args.get('genres')
+    print(year, genre)
 
-    conn = sqlite3.connect('.../../movielens.db')
+    if not title and not year and not genre:
+        return jsonify({'error': 'Parameter is required'}), 400
+
+    conn = sqlite3.connect('../movielens.db')
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * FROM movies WHERE title LIKE ?', ('%' + title + '%',))
+    if title:
+        cursor.execute('SELECT * FROM movies WHERE title LIKE ?', ('%' + title + '%',))
+    elif year and genre:
+        cursor.execute('SELECT * FROM movies WHERE year = ? AND genres LIKE ?', (year, ('%'+genre+'%')))
+
     movies = cursor.fetchall()
 
     conn.close()
