@@ -1,2 +1,4 @@
 ml-25m
 movielens.db
+**/__pycache__
+venv
