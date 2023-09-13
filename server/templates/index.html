@@ -2,10 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Filmes</title>
-    <!-- Adicione os links para os arquivos CSS do Bootstrap aqui -->
+    <title>Challenge</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Adicione o link para o arquivo CSS personalizado aqui -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -61,16 +59,14 @@
     </div>
 
     <script>
-      // Função para atualizar o placeholder da caixa de entrada de texto com base na opção selecionada
       function atualizarPlaceholder() {
           var selected = document.getElementById('dropdown').value;
           var filtroInput = document.getElementById('filter');
           var container = document.getElementById('ygContainer');
 
           
-          // Define o placeholder com base na opção selecionada
           if (selected === 'Title') {
-              filtroInput.placeholder = 'Enter the tile desired...';
+              filtroInput.placeholder = 'Enter the title desired...';
               container.style.display = 'none';
           } else if (selected === 'Year and genre') {
               filtroInput.placeholder = 'Year';
@@ -84,11 +80,9 @@
           }
       }
   
-      // Adicione um evento onchange ao dropdown
       document.getElementById('dropdown').onchange = atualizarPlaceholder;
   </script>
 
-    <!-- Adicione os links para os arquivos JS do Bootstrap e jQuery aqui -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

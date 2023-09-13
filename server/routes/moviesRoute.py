@@ -22,12 +22,17 @@ def list_movies_by_title():
     cursor = conn.cursor()
 
     if title:
-        cursor.execute('SELECT * FROM movies WHERE title LIKE ?', ('%' + title + '%',))
+        cursor.execute("""SELECT m.*, r.mean AS avg_rating, r.count AS num_rating, r.popularity_score
+                            FROM movies m
+                            LEFT JOIN avgRatings r ON m.movieId = r.movieId
+                            WHERE m.title LIKE ?""", ('%' + title + '%',))
     elif year and genre:
-        cursor.execute('SELECT * FROM movies WHERE year = ? AND genres LIKE ?', (year, ('%'+genre+'%')))
+        cursor.execute("""SELECT m.*, r.mean AS avg_rating, r.count AS num_rating, r.popularity_score
+                        FROM movies m
+                        LEFT JOIN avgRatings r ON m.movieId = r.movieId
+                        WHERE year = ? AND genres LIKE ?""", (year, ('%'+genre+'%')))
     elif top:
-        # SELECT m.title, AVG(r.rating) AS avg_rating FROM movies AS m LEFT JOIN ratings AS r ON m.movieId = r.movieId GROUP BY m.title ORDER BY avg_rating DESC LIMIT 10;
-        cursor.execute(f"""SELECT m.movieId, m.title, r.mean AS avg_rating, r.count AS num_rating, r.popularity_score
+        cursor.execute(f"""SELECT m.movieId, m.title, m.genres, m.year,r.mean AS avg_rating, r.count AS num_rating, r.popularity_score
                             FROM movies as m
                             LEFT JOIN avgRatings AS r ON m.movieId = r.movieId
                             ORDER BY popularity_score DESC
@@ -42,12 +47,15 @@ def list_movies_by_title():
         movie_dict = {
             'id': movie[0],
             'title': movie[1],
-            'avg_rating' if top else 'year': movie[2],
+            'genre': movie[2],
+            'year': movie[3],
+            'avg_rating' : movie[4],
+            'num_rated': movie[5],
+            'popularity_score': movie[6],
         }
         if top:
             movie_dict.update({
-                'num_rated': movie[3],
-                'popularity_score': movie[4]
+                
             })
         movie_list.append(movie_dict)
     return jsonify(movie_list)
