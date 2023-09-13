@@ -3,12 +3,16 @@ import sqlite3
 conn = sqlite3.connect('../movielens.db')
 
 cursor = conn.cursor()
+title="Toy Story"
 
-cursor.execute("""SELECT m.movieId, m.title, r.mean AS avg_rating, r.count AS num_rating
-                            FROM movies as m
-                            LEFT JOIN avgRatings AS r ON m.movieId = r.movieId
-                            ORDER BY mean DESC
-                            LIMIT 100;""")
+cursor.execute("""
+    SELECT m.*, r.*
+    FROM movies m
+    LEFT JOIN avgRatings r ON m.movieId = r.movieId
+    WHERE m.title LIKE ?
+""", ('%' + title + '%',))
+# cursor.execute('SELECT * FROM movies WHERE title LIKE ?', ('%' + title + '%',))
+
 
 movies = cursor.fetchall()
 

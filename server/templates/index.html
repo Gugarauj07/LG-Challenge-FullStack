@@ -47,11 +47,11 @@
                 {% for movie in movies %}
                 <tr>
                     <td>{{ movie.title }}</td>
-                    <td>{{ movie.genres }}</td>
+                    <td>{{ movie.genre }}</td>
                     <td>{{ movie.year }}</td>
                     <td>{{ movie.avg_rating }}</td>
-                    <td>{{ movie.rating_count }}</td>
-                    <td>{{ movie.popularity }}</td>
+                    <td>{{ movie.num_rated }}</td>
+                    <td>{{ movie.popularity_score }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
