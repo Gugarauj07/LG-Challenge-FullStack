@@ -32,3 +32,5 @@ Teste: /movies?top=10
 ## Terceira parte do desafio: Consumindo os dados
 
 Como não precisamos de interfaces avançadas, decidi usar a biblioteca "Bootstrap" com o próprio flask para desenvolver o frontend.
+
+![image](https://github.com/Gugarauj07/LG-Challenge-FullStack/assets/92393578/df6e3c5c-66a4-41e7-b0bd-4e9472823fda)
