@@ -2,6 +2,8 @@ import pandas as pd
 import sqlite3
 import math
 
+print("Iniciando processamento dos dados")
+
 def popularity_heuristic(row):
     return row['mean'] * math.sqrt(row['count'])
 

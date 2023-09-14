@@ -11,7 +11,7 @@ with open(nome_arquivo_zip, 'wb') as arquivo_zip:
     arquivo_zip.write(response.content)
 
 with zipfile.ZipFile(nome_arquivo_zip, 'r') as zip_ref:
-    zip_ref.extractall("./processing")
+    zip_ref.extractall("./")
 
 os.remove(nome_arquivo_zip)
 
