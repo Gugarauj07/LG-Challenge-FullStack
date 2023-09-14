@@ -13,13 +13,13 @@ def index():
     response = {}
 
     if filter == "Title":
-        response = requests.get('http://127.0.0.1:5000/movies', params={'title': param}).json()
+        response = requests.get('http://0.0.0.0:5000/movies', params={'title': param}).json()
     elif filter == "Year and genre":
-        response = requests.get('http://127.0.0.1:5000/movies', params={'year': param, 'genres': genre}).json()
+        response = requests.get('http://0.0.0.0:5000/movies', params={'year': param, 'genres': genre}).json()
     elif filter == "Top K rated":
-        response = requests.get('http://127.0.0.1:5000/movies', params={'top': param}).json()
+        response = requests.get('http://0.0.0.0:5000/movies', params={'top': param}).json()
 
     return render_template('index.html', movies=response)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='0.0.0.0', port=5000)

@@ -13,7 +13,6 @@ def list_movies_by_title():
     year = request.args.get('year')
     genre = request.args.get('genres')
     top = request.args.get('top')
-    print(top)
 
     if not title and not year and not genre and not top:
         return jsonify({'error': 'Parameter is required'}), 400
