@@ -1,8 +1,8 @@
 # Preparando o ambiente
 
-Usando Docker:
-Execute no terminal: ```docker build -t challenge .```
-Execute no terminal: ```docker run -p 5000:5000 challenge```
+Usando Docker: 
+- Execute no terminal: ```docker build -t challenge .``` 
+- Execute no terminal: ```docker run -p 5000:5000 challenge``` 
 - Abra seu navegador no endereço: http://127.0.0.1:5000
 
 Se nao tiver docker:
