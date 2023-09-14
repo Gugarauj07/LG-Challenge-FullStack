@@ -25,9 +25,9 @@ Após isso, criamos o banco de dados a partir desses arquivos csv, usando o banc
 Decidi usar o framework "Flask", pois necessita de poucas linhas de código para rodar uma API. Então, levantei a rota ```/movies``` que recebe os parâmetros: title, year, genre e top.
 São feitas pesquisas em sql para filtrar os filmes por cada tipo de parâmetro dado. É retornado pela api um json com o id, titulo, genero, ano, rating, quantidade de ratings, e popularidade. 
 A popularidade foi adicionada para levar em consideração não só os ratings, mas também a quantidade de classificações em cada filme. O cáuculo usado foi: ```rating médio x raiz quadrada da quantidade de classificações```. O parâmetro "top" leva em consideração a popularidade em ordem decrescente.
-Teste: /movies?title=Toy Story
-Teste: /movies?year=1995&genres=Adventure
-Teste: /movies?top=10
+- Teste: /movies?title=Toy Story
+- Teste: /movies?year=1995&genres=Adventure
+- Teste: /movies?top=10
 
 ## Terceira parte do desafio: Consumindo os dados
 
