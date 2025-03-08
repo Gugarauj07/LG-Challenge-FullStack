@@ -1,1 +1,122 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Importando tema do Angular Material */
+@use '@angular/material' as mat;
+@include mat.core();
+
+/* Definindo paleta de cores personalizada */
+$movielens-primary: mat.define-palette(mat.$indigo-palette, 700);
+$movielens-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$movielens-warn: mat.define-palette(mat.$red-palette);
+
+/* Criando o tema */
+$movielens-theme: mat.define-light-theme((
+  color: (
+    primary: $movielens-primary,
+    accent: $movielens-accent,
+    warn: $movielens-warn,
+  )
+));
+
+/* Aplicando o tema aos componentes do Angular Material */
+@include mat.all-component-themes($movielens-theme);
+
+/* Estilos globais */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Layout principal */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Classes utilitárias */
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+/* Cards de filmes */
+.movie-card {
+  margin: 16px 0;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.movie-card-header {
+  height: 48px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.movie-image {
+  height: 300px;
+  object-fit: cover;
+}
+
+.movie-card-content {
+  height: 80px;
+  overflow: hidden;
+}
+
+/* Layout de grid responsivo */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 20px;
+  margin: 20px 0;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 599px) {
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-gap: 16px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+
+  .movie-image {
+    height: 200px;
+  }
+}

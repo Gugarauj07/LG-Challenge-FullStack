@@ -32,6 +32,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Serviços e Interceptors
 import { CookieService } from 'ngx-cookie-service';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -92,7 +93,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     MatTooltipModule
   ],
   providers: [
-    CookieService
+    CookieService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
