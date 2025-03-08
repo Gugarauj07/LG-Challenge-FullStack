@@ -2,10 +2,12 @@ from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app import models, schemas
 from app.api import deps
 from app.services.recommendation import get_recommendations_for_user, get_similar_movies
+from app.models.movie import movie_genre
 
 router = APIRouter()
 
@@ -49,18 +51,37 @@ def get_similar_movies_endpoint(
     """
     Obtém filmes similares ao filme especificado
     """
+    # Verificar se o filme existe
     movie = db.query(models.Movie).filter(models.Movie.movie_id == movie_id).first()
     if not movie:
         raise HTTPException(status_code=404, detail="Filme não encontrado")
 
-    # Obter IDs de filmes similares
-    similar_movie_ids = get_similar_movies(db, movie.id, limit)
+    # Usar a abordagem baseada em gêneros que testamos e funciona
+    if movie.genres:
+        # Obter gêneros do filme
+        genre_ids = [genre.id for genre in movie.genres]
 
-    # Obter informações completas dos filmes similares
-    similar_movies = (
-        db.query(models.Movie)
-        .filter(models.Movie.id.in_(similar_movie_ids))
-        .all()
-    )
+        # Encontrar filmes com gêneros semelhantes
+        similar_movies = (
+            db.query(models.Movie)
+            .join(movie_genre)
+            .filter(movie_genre.c.genre_id.in_(genre_ids))
+            .filter(models.Movie.id != movie.id)  # Excluir o próprio filme
+            .group_by(models.Movie.id)
+            .order_by(func.count().desc())  # Ordenar por número de gêneros em comum
+            .limit(limit)
+        ).all()
 
-    return similar_movies
+        return similar_movies
+    else:
+        # Se o filme não tiver gêneros, retornar filmes populares
+        popular_movies = (
+            db.query(models.Movie)
+            .join(models.Rating)
+            .group_by(models.Movie.id)
+            .order_by(func.avg(models.Rating.rating).desc())
+            .filter(models.Movie.id != movie.id)
+            .limit(limit)
+        ).all()
+
+        return popular_movies
