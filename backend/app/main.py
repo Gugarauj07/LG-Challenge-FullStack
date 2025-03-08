@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 
 from app.api.api import api_router
 from app.core.config import settings
+from app.utils.etl import init_app_data
+
+# Configuração do logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("app")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -25,6 +31,12 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 async def root():
     return {"message": "Bem-vindo à API do MovieLens Challenge. Acesse /docs para a documentação da API."}
+
+@app.on_event("startup")
+async def startup_event():
+    """Evento executado na inicialização da aplicação."""
+    logger.info("Iniciando a aplicação...")
+    init_app_data()  # Iniciar ETL em segundo plano
 
 if __name__ == "__main__":
     import uvicorn
