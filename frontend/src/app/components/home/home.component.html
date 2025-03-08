@@ -1,96 +1,63 @@
-<div class="home-container">
-  <section class="hero">
-    <div class="hero-content">
-      <h1 class="hero-title">Descubra Novos Filmes</h1>
-      <p class="hero-subtitle">Explore milhares de filmes e encontre suas próximas favoritos</p>
-      <div class="hero-actions">
-        <a mat-raised-button color="primary" [routerLink]="['/movies']">
-          <mat-icon>movie</mat-icon> Ver Filmes
-        </a>
-        <a mat-raised-button color="accent" [routerLink]="['/search']">
-          <mat-icon>search</mat-icon> Buscar
-        </a>
-      </div>
+<div class="container">
+  <header class="home-header">
+    <h1 class="text-center">Bem-vindo ao MovieLens</h1>
+    <p class="text-center">Descubra novos filmes e compartilhe suas avaliações</p>
+  </header>
+
+  <section class="stats-section" *ngIf="movieStats">
+    <div class="stats-cards">
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stats-value">{{ movieStats.total_movies | number }}</div>
+          <div class="stats-label">Filmes</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stats-value">{{ movieStats.total_ratings | number }}</div>
+          <div class="stats-label">Avaliações</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-card-content>
+          <div class="stats-value">{{ movieStats.average_rating | number:'1.1-1' }}</div>
+          <div class="stats-label">Nota Média</div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </section>
 
-  <section class="featured-movies" *ngIf="topMovies$ | async as topMovies">
-    <h2 class="section-title">Filmes Mais Bem Avaliados</h2>
-
-    <div class="movies-grid" *ngIf="topMovies.length > 0">
-      <mat-card class="movie-card" *ngFor="let movie of topMovies">
-        <mat-card-header>
-          <mat-card-title class="movie-card-header">{{ movie.title }}</mat-card-title>
-          <mat-card-subtitle>{{ movie.year }}</mat-card-subtitle>
-        </mat-card-header>
-
-        <img mat-card-image class="movie-image" [src]="getMovieImage(movie)" alt="{{ movie.title }}">
-
-        <mat-card-content class="movie-card-content">
-          <p>
-            <mat-icon class="rating-icon">star</mat-icon>
-            <span class="rating">{{ movie.average_rating | number:'1.1-1' }}</span>
-            <span class="rating-count">({{ movie.rating_count }} avaliações)</span>
-          </p>
-          <p class="genres">
-            <mat-chip-listbox>
-              <mat-chip *ngFor="let genre of movie.genres | slice:0:3">{{ genre.name }}</mat-chip>
-            </mat-chip-listbox>
-          </p>
-        </mat-card-content>
-
-        <mat-card-actions>
-          <a mat-button color="primary" [routerLink]="['/movies', movie.movie_id]">
-            Ver Detalhes
-          </a>
-        </mat-card-actions>
-      </mat-card>
+  <section class="top-movies-section">
+    <div class="section-header">
+      <h2>Filmes Mais Bem Avaliados</h2>
+      <a mat-button color="primary" routerLink="/movies">Ver todos</a>
     </div>
 
-    <div class="no-movies" *ngIf="topMovies.length === 0">
+    <div class="loading-container" *ngIf="loading">
       <mat-spinner diameter="40"></mat-spinner>
-      <p>Carregando filmes...</p>
+    </div>
+
+    <div class="error-message" *ngIf="error">
+      <p>Não foi possível carregar os filmes. Por favor, tente novamente mais tarde.</p>
+    </div>
+
+    <div class="card-grid" *ngIf="!loading && !error">
+      <app-movie-card *ngFor="let movie of topMovies" [movie]="movie"></app-movie-card>
     </div>
   </section>
 
-  <section class="stats" *ngIf="movieStats$ | async as stats">
-    <h2 class="section-title">Estatísticas</h2>
-
-    <div class="stats-grid">
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>movie</mat-icon>
-          <mat-card-title>Total de Filmes</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="stat-value">
-          {{ stats.total_movies }}
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>star</mat-icon>
-          <mat-card-title>Total de Avaliações</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="stat-value">
-          {{ stats.total_ratings }}
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-header>
-          <mat-icon mat-card-avatar>grade</mat-icon>
-          <mat-card-title>Avaliação Média</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="stat-value">
-          {{ stats.average_rating | number:'1.2-2' }}
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <h3 class="subsection-title">Gêneros Mais Populares</h3>
-    <div class="genres-chart-container">
-      <canvas id="genresChart"></canvas>
+  <section class="genres-section" *ngIf="movieStats && movieStats.top_genres">
+    <h2>Gêneros Populares</h2>
+    <div class="genres-list">
+      <a mat-raised-button
+         *ngFor="let genre of movieStats.top_genres"
+         [routerLink]="['/search']"
+         [queryParams]="{genre: genre.name}"
+         class="genre-button">
+        {{ genre.name }} ({{ genre.movie_count }})
+      </a>
     </div>
   </section>
 </div>

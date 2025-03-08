@@ -1,1 +1,51 @@
-<p>movie-detail works!</p>
+<div class="container">
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <p>Não foi possível carregar os detalhes do filme. Por favor, tente novamente mais tarde.</p>
+  </div>
+
+  <div class="movie-detail" *ngIf="!loading && !error && movie">
+    <div class="back-button">
+      <a mat-button routerLink="/movies">
+        <mat-icon>arrow_back</mat-icon> Voltar para filmes
+      </a>
+    </div>
+
+    <mat-card class="movie-detail-card">
+      <mat-card-header>
+        <mat-card-title class="movie-title">{{ movie.title }}</mat-card-title>
+        <mat-card-subtitle *ngIf="movie.year">{{ movie.year }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="movie-info">
+          <div class="movie-genres">
+            <h3>Gêneros</h3>
+            <mat-chip-set>
+              <mat-chip *ngFor="let genre of movie.genres">{{ genre }}</mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <div class="movie-rating" *ngIf="movie.average_rating">
+            <h3>Avaliação</h3>
+            <div class="rating-display">
+              <mat-icon class="star-icon">star</mat-icon>
+              <span class="rating-value">{{ movie.average_rating | number:'1.1-1' }}</span>
+              <span class="rating-count" *ngIf="movie.rating_count">({{ movie.rating_count }} avaliações)</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <section class="similar-movies-section" *ngIf="similarMovies.length > 0">
+      <h2>Filmes Similares</h2>
+      <div class="card-grid">
+        <app-movie-card *ngFor="let movie of similarMovies" [movie]="movie"></app-movie-card>
+      </div>
+    </section>
+  </div>
+</div>

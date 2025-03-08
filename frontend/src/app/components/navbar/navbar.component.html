@@ -1,0 +1,41 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="container">
+    <div class="navbar-brand">
+      <a routerLink="/" class="navbar-logo">
+        <mat-icon>movie</mat-icon>
+        <span>MovieLens</span>
+      </a>
+    </div>
+
+    <div class="navbar-menu">
+      <a mat-button routerLink="/movies" routerLinkActive="active">
+        <mat-icon>theaters</mat-icon>
+        <span>Filmes</span>
+      </a>
+      <a mat-button routerLink="/search" routerLinkActive="active">
+        <mat-icon>search</mat-icon>
+        <span>Buscar</span>
+      </a>
+    </div>
+
+    <div class="navbar-end">
+      <ng-container *ngIf="!isAuthenticated()">
+        <a mat-button routerLink="/login" routerLinkActive="active">Login</a>
+        <a mat-raised-button color="accent" routerLink="/register">Cadastrar</a>
+      </ng-container>
+
+      <ng-container *ngIf="isAuthenticated()">
+        <button mat-button [matMenuTriggerFor]="userMenu">
+          <mat-icon>account_circle</mat-icon>
+          <span *ngIf="currentUser">{{ currentUser.username }}</span>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Sair</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+    </div>
+  </div>
+</mat-toolbar>

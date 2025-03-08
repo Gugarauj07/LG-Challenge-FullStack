@@ -1,0 +1,39 @@
+.form-container {
+  max-width: 400px;
+  margin: 60px auto;
+}
+
+.auth-card {
+  padding: 20px;
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+
+  button {
+    min-width: 120px;
+
+    mat-spinner {
+      display: inline-block;
+      margin: 0 auto;
+    }
+  }
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+
+  span {
+    margin-right: 8px;
+    color: #757575;
+  }
+}

@@ -1,1 +1,29 @@
-<p>movie-list works!</p>
+<div class="container">
+  <header class="page-header">
+    <h1>Filmes</h1>
+    <p>Explore nossa coleção de filmes</p>
+  </header>
+
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <p>Não foi possível carregar os filmes. Por favor, tente novamente mais tarde.</p>
+  </div>
+
+  <div class="movie-list-content" *ngIf="!loading && !error">
+    <div class="card-grid">
+      <app-movie-card *ngFor="let movie of movies" [movie]="movie"></app-movie-card>
+    </div>
+
+    <mat-paginator
+      [length]="totalMovies"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      (page)="handlePageEvent($event)"
+      aria-label="Selecione a página">
+    </mat-paginator>
+  </div>
+</div>

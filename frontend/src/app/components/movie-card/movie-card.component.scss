@@ -1,0 +1,40 @@
+.movie-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  mat-card-content {
+    flex-grow: 1;
+  }
+
+  mat-card-actions {
+    margin-top: auto;
+  }
+}
+
+.movie-genres {
+  margin: 12px 0;
+}
+
+.movie-rating {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+
+  .star-icon {
+    color: #ffc107;
+    margin-right: 4px;
+  }
+
+  .rating-count {
+    margin-left: 4px;
+    color: #757575;
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,21 @@
+<mat-card class="movie-card">
+  <mat-card-header>
+    <mat-card-title>{{ movie.title }}</mat-card-title>
+    <mat-card-subtitle *ngIf="movie.year">{{ movie.year }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="movie-genres">
+      <mat-chip-set>
+        <mat-chip *ngFor="let genre of movie.genres.slice(0, 3)">{{ genre }}</mat-chip>
+      </mat-chip-set>
+    </div>
+    <div class="movie-rating" *ngIf="movie.average_rating">
+      <mat-icon class="star-icon">star</mat-icon>
+      <span>{{ movie.average_rating | number:'1.1-1' }}</span>
+      <span class="rating-count" *ngIf="movie.rating_count">({{ movie.rating_count }})</span>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-button color="primary" [routerLink]="['/movies', movie.id]">DETALHES</a>
+  </mat-card-actions>
+</mat-card>

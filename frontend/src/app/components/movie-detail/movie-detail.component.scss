@@ -1,0 +1,66 @@
+.movie-detail {
+  margin: 40px 0;
+}
+
+.back-button {
+  margin-bottom: 20px;
+}
+
+.movie-detail-card {
+  margin-bottom: 40px;
+}
+
+.movie-title {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #3f51b5;
+}
+
+.movie-info {
+  margin-top: 20px;
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #616161;
+  }
+}
+
+.movie-genres {
+  margin-bottom: 24px;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+
+  .star-icon {
+    color: #ffc107;
+    margin-right: 8px;
+    font-size: 1.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  .rating-value {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-right: 8px;
+  }
+
+  .rating-count {
+    color: #757575;
+  }
+}
+
+.similar-movies-section {
+  margin-top: 40px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 20px;
+    color: #3f51b5;
+  }
+}

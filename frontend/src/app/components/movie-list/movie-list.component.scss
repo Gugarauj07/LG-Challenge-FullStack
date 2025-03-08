@@ -1,0 +1,23 @@
+.page-header {
+  margin: 40px 0;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 8px;
+    color: #3f51b5;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #757575;
+  }
+}
+
+.movie-list-content {
+  margin-bottom: 40px;
+}
+
+mat-paginator {
+  margin-top: 20px;
+}

@@ -3,26 +3,20 @@ export interface User {
   username: string;
   email?: string;
   is_active: boolean;
-  is_superuser: boolean;
 }
 
-export interface LoginRequest {
+export interface UserLogin {
   username: string;
   password: string;
 }
 
-export interface RegisterRequest {
+export interface UserRegister {
   username: string;
-  email: string;
+  email?: string;
   password: string;
 }
 
-export interface AuthResponse {
+export interface Token {
   access_token: string;
   token_type: string;
-}
-
-export interface UserProfile {
-  user: User;
-  favoriteMovies?: number[];
 }

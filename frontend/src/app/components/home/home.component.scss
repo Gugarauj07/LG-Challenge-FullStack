@@ -1,188 +1,113 @@
-.home-container {
-  padding: 0;
-}
+.home-header {
+  margin: 40px 0;
 
-// Hero Section
-.hero {
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/images/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  text-align: center;
-  padding: 80px 20px;
-  margin: -20px -20px 40px -20px; // Compensate for main-content padding
-}
-
-.hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
-
-.hero-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 32px;
-  opacity: 0.9;
-}
-
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-}
-
-// Featured Movies Section
-.section-title {
-  text-align: center;
-  margin-bottom: 30px;
-  position: relative;
-  font-size: 1.8rem;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background-color: #3f51b5;
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 16px;
+    color: #3f51b5;
   }
-}
-
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
-  margin-top: 40px;
-}
-
-.movie-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.movie-card-header {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.movie-image {
-  height: 300px;
-  object-fit: cover;
-}
-
-.rating-icon {
-  color: #ffc107;
-  vertical-align: middle;
-  margin-right: 4px;
-}
-
-.rating {
-  font-weight: bold;
-  margin-right: 8px;
-}
-
-.rating-count {
-  color: #757575;
-  font-size: 0.9rem;
-}
-
-.genres {
-  margin-top: 8px;
-}
-
-mat-card-actions {
-  margin-top: auto;
-}
-
-.no-movies {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
 
   p {
-    margin-top: 16px;
+    font-size: 1.2rem;
     color: #757575;
   }
 }
 
-// Stats Section
-.stats {
-  margin-top: 60px;
-  background-color: #f9f9f9;
-  padding: 40px;
-  border-radius: 8px;
+.stats-section {
+  margin-bottom: 40px;
+
+  .stats-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .stats-card {
+    flex: 1;
+    text-align: center;
+
+    .stats-value {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: #3f51b5;
+    }
+
+    .stats-label {
+      font-size: 1rem;
+      color: #757575;
+      margin-top: 8px;
+    }
+  }
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-  margin: 30px 0;
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+  }
 }
 
-.stat-card {
+.top-movies-section {
+  margin-bottom: 40px;
+}
+
+.movie-genres {
+  margin: 12px 0;
+}
+
+.movie-rating {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+
+  .star-icon {
+    color: #ffc107;
+    margin-right: 4px;
+  }
+
+  .rating-count {
+    margin-left: 4px;
+    color: #757575;
+    font-size: 0.9rem;
+  }
+}
+
+.genres-section {
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 20px;
+  }
+
+  .genres-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .genre-button {
+    margin-bottom: 8px;
+  }
+}
+
+.error-message {
   text-align: center;
-}
-
-.stat-value {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #3f51b5;
-  margin-top: 20px;
-}
-
-.subsection-title {
-  text-align: center;
-  margin: 40px 0 24px;
-}
-
-.genres-chart-container {
-  max-width: 800px;
-  margin: 0 auto;
-  height: 400px;
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .hero {
-    padding: 60px 20px;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-
-  .hero-actions {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .stats {
-    padding: 20px;
-  }
-
-  .genres-chart-container {
-    height: 300px;
-  }
+  color: #f44336;
+  padding: 20px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin: 20px 0;
 }

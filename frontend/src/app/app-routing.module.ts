@@ -6,12 +6,11 @@ import { HomeComponent } from './components/home/home.component';
 import { MovieListComponent } from './components/movie-list/movie-list.component';
 import { MovieDetailComponent } from './components/movie-detail/movie-detail.component';
 import { SearchComponent } from './components/search/search.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 
-// Guards (serão implementados posteriormente)
-// import { AuthGuard } from './guards/auth.guard';
+// Guard
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,11 +20,6 @@ const routes: Routes = [
   { path: 'search', component: SearchComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    // canActivate: [AuthGuard]  // Será adicionado posteriormente
-  },
   { path: '**', redirectTo: 'home' }
 ];
 

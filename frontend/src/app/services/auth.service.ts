@@ -1,118 +1,74 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import { CookieService } from 'ngx-cookie-service';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 
+import { User, UserLogin, UserRegister, Token } from '../models/user.model';
 import { environment } from '../../environments/environment';
-import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser$: Observable<User | null>;
-  private tokenKey = 'auth_token';
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser = this.currentUserSubject.asObservable();
 
   constructor(
     private http: HttpClient,
-    private cookieService: CookieService
+    private router: Router
   ) {
-    this.currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-    this.currentUser$ = this.currentUserSubject.asObservable();
+    this.checkToken();
   }
 
-  // Getter para obter o usuário atual
-  public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+  private checkToken(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.getProfile().subscribe({
+        next: user => this.currentUserSubject.next(user),
+        error: () => {
+          localStorage.removeItem('token');
+          this.currentUserSubject.next(null);
+        }
+      });
+    }
   }
 
-  // Login do usuário
-  login(loginData: LoginRequest): Observable<User> {
+  login(credentials: UserLogin): Observable<Token> {
+    // Converter para o formato esperado pela API (OAuth2PasswordRequestForm)
     const formData = new FormData();
-    formData.append('username', loginData.username);
-    formData.append('password', loginData.password);
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
 
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, formData)
-      .pipe(
-        tap(response => this.storeToken(response.access_token)),
-        tap(() => this.loadCurrentUser()),
-        map(() => this.currentUserValue as User),
-        catchError(error => {
-          console.error('Erro no login:', error);
-          throw error;
-        })
-      );
+    return this.http.post<Token>(`${this.apiUrl}/login`, formData).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.access_token);
+        this.getProfile().subscribe(user => {
+          this.currentUserSubject.next(user);
+        });
+      })
+    );
   }
 
-  // Registro de novo usuário
-  register(userData: RegisterRequest): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/register`, userData)
-      .pipe(
-        catchError(error => {
-          console.error('Erro no registro:', error);
-          throw error;
-        })
-      );
+  register(userData: UserRegister): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, userData);
   }
 
-  // Carregar informações do usuário atual
-  loadCurrentUser(): Observable<User | null> {
-    if (!this.getToken()) {
-      this.currentUserSubject.next(null);
-      return of(null);
-    }
-
-    return this.http.get<User>(`${this.apiUrl}/me`)
-      .pipe(
-        tap(user => this.currentUserSubject.next(user)),
-        catchError(() => {
-          this.logout();
-          return of(null);
-        })
-      );
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/me`);
   }
 
-  // Logout do usuário
   logout(): void {
-    this.cookieService.delete(this.tokenKey);
-    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('token');
     this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
   }
 
-  // Verificar se o usuário está logado
-  isLoggedIn(): boolean {
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isAuthenticated(): boolean {
     return !!this.getToken();
-  }
-
-  // Obter o token de autenticação
-  getToken(): string {
-    return this.cookieService.get(this.tokenKey) || localStorage.getItem(this.tokenKey) || '';
-  }
-
-  // Armazenar o token de autenticação
-  private storeToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
-    this.cookieService.set(this.tokenKey, token, { path: '/' });
-  }
-
-  // Obter o usuário do armazenamento local
-  private getUserFromStorage(): User | null {
-    if (!this.getToken()) {
-      return null;
-    }
-
-    // Tentar obter o usuário do localStorage, se existir
-    const userJson = localStorage.getItem('current_user');
-    if (userJson) {
-      try {
-        return JSON.parse(userJson);
-      } catch {
-        return null;
-      }
-    }
-    return null;
   }
 }

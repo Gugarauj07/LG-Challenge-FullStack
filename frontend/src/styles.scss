@@ -1,25 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Importando tema do Angular Material */
+/* Importando o tema do Angular Material */
 @use '@angular/material' as mat;
 @include mat.core();
 
-/* Definindo paleta de cores personalizada */
-$movielens-primary: mat.define-palette(mat.$indigo-palette, 700);
-$movielens-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
-$movielens-warn: mat.define-palette(mat.$red-palette);
+/* Definindo o tema primário e de acento */
+$app-primary: mat.define-palette(mat.$indigo-palette, 500);
+$app-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$app-warn: mat.define-palette(mat.$red-palette);
 
-/* Criando o tema */
-$movielens-theme: mat.define-light-theme((
+$app-theme: mat.define-light-theme((
   color: (
-    primary: $movielens-primary,
-    accent: $movielens-accent,
-    warn: $movielens-warn,
-  )
+    primary: $app-primary,
+    accent: $app-accent,
+    warn: $app-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
 ));
 
-/* Aplicando o tema aos componentes do Angular Material */
-@include mat.all-component-themes($movielens-theme);
+@include mat.all-component-themes($app-theme);
 
 /* Estilos globais */
 html, body {
@@ -28,35 +28,20 @@ html, body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* Layout principal */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+body {
+  background-color: #f5f5f5;
+  color: rgba(0, 0, 0, 0.87);
 }
 
-.main-content {
-  flex: 1;
-  padding: 20px;
+.container {
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 20px;
 }
 
-/* Classes utilitárias */
-.centered {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
+/* Utilitários */
 .text-center {
   text-align: center;
-}
-
-.full-width {
-  width: 100%;
 }
 
 .mt-1 { margin-top: 0.5rem; }
@@ -69,54 +54,55 @@ html, body {
 .mb-3 { margin-bottom: 1.5rem; }
 .mb-4 { margin-bottom: 2rem; }
 
-/* Cards de filmes */
-.movie-card {
-  margin: 16px 0;
-  transition: transform 0.3s ease;
+/* Principais layouts */
+.main-content {
+  min-height: calc(100vh - 128px); /* Altura total - (header + footer) */
+  padding: 20px;
 }
 
-.movie-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-.movie-card-header {
-  height: 48px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.movie-image {
-  height: 300px;
-  object-fit: cover;
-}
-
-.movie-card-content {
-  height: 80px;
-  overflow: hidden;
-}
-
-/* Layout de grid responsivo */
-.grid-container {
+/* Cards e listas */
+.card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  grid-gap: 20px;
-  margin: 20px 0;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-/* Responsividade para dispositivos móveis */
-@media (max-width: 599px) {
-  .grid-container {
+.movie-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .mat-card-content {
+    flex-grow: 1;
+  }
+
+  .mat-card-actions {
+    margin-top: auto;
+  }
+}
+
+/* Telas pequenas */
+@media (max-width: 768px) {
+  .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    grid-gap: 16px;
   }
+}
 
-  .main-content {
-    padding: 16px;
-  }
+/* Formulários */
+.form-container {
+  max-width: 500px;
+  margin: 0 auto;
 
-  .movie-image {
-    height: 200px;
+  .full-width {
+    width: 100%;
   }
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
