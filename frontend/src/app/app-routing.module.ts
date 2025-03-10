@@ -8,6 +8,8 @@ import { MovieDetailComponent } from './components/movie-detail/movie-detail.com
 import { SearchComponent } from './components/search/search.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { RecommendationsComponent } from './components/recommendations/recommendations.component';
 
 // Guard
 import { AuthGuard } from './guards/auth.guard';
@@ -20,6 +22,8 @@ const routes: Routes = [
   { path: 'search', component: SearchComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'favorites', component: FavoritesComponent, canActivate: [AuthGuard] },
+  { path: 'recommendations', component: RecommendationsComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'home' }
 ];
 

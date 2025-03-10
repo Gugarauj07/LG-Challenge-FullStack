@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Meus Filmes Favoritos</h1>
+    <p>Gerencie sua lista de filmes favoritos</p>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="loading-text">Carregando seus favoritos...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error && !loading">
+    <p>Não foi possível carregar seus favoritos. Por favor, tente novamente mais tarde.</p>
+  </div>
+
+  <div class="no-favorites" *ngIf="!loading && !error && favorites.length === 0">
+    <mat-icon class="no-favorites-icon">favorite_border</mat-icon>
+    <h2>Você ainda não tem favoritos</h2>
+    <p>Adicione filmes aos seus favoritos para vê-los aqui.</p>
+    <a mat-raised-button color="primary" routerLink="/movies">Explorar filmes</a>
+  </div>
+
+  <div class="favorites-grid" *ngIf="!loading && !error && favorites.length > 0">
+    <app-movie-card *ngFor="let movie of favorites" [movie]="movie"></app-movie-card>
+  </div>
+</div>

@@ -30,6 +30,15 @@
           <span *ngIf="currentUser">{{ currentUser.username }}</span>
         </button>
         <mat-menu #userMenu="matMenu">
+          <a mat-menu-item routerLink="/favorites">
+            <mat-icon>favorite</mat-icon>
+            <span>Meus Favoritos</span>
+          </a>
+          <a mat-menu-item routerLink="/recommendations">
+            <mat-icon>movie_filter</mat-icon>
+            <span>Recomendações</span>
+          </a>
+          <mat-divider></mat-divider>
           <button mat-menu-item (click)="logout()">
             <mat-icon>exit_to_app</mat-icon>
             <span>Sair</span>

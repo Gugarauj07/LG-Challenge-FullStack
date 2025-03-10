@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Recomendações para Você</h1>
+    <p>Filmes selecionados com base nos seus favoritos e preferências</p>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="loading-text">Carregando recomendações personalizadas...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error && !loading">
+    <p>Não foi possível carregar suas recomendações. Por favor, tente novamente mais tarde.</p>
+  </div>
+
+  <div class="no-recommendations" *ngIf="!loading && !error && recommendations.length === 0">
+    <mat-icon class="no-recommendations-icon">movie_filter</mat-icon>
+    <h2>Sem recomendações disponíveis</h2>
+    <p>Adicione filmes aos seus favoritos para que possamos recomendar títulos similares.</p>
+    <a mat-raised-button color="primary" routerLink="/favorites">Ver meus favoritos</a>
+  </div>
+
+  <div class="recommendations-grid" *ngIf="!loading && !error && recommendations.length > 0">
+    <app-movie-card *ngFor="let movie of recommendations" [movie]="movie"></app-movie-card>
+  </div>
+</div>

@@ -17,5 +17,10 @@
   </mat-card-content>
   <mat-card-actions>
     <a mat-button color="primary" [routerLink]="['/movies', movie.id]">DETALHES</a>
+    <button mat-icon-button color="warn"
+      [matTooltip]="isFavorite(movie.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+      (click)="toggleFavorite(movie.id)">
+      <mat-icon>{{ isFavorite(movie.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
   </mat-card-actions>
 </mat-card>

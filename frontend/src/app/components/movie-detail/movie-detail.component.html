@@ -38,6 +38,15 @@
             </div>
           </div>
         </div>
+
+        <div class="favorite-action">
+          <button mat-raised-button color="warn"
+            [matTooltip]="isFavorite(movie.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+            (click)="toggleFavorite(movie.id)">
+            <mat-icon>{{ isFavorite(movie.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+            {{ isFavorite(movie.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}
+          </button>
+        </div>
       </mat-card-content>
     </mat-card>
 

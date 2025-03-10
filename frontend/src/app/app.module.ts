@@ -34,6 +34,8 @@ import { SearchComponent } from './components/search/search.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { RecommendationsComponent } from './components/recommendations/recommendations.component';
 
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -49,7 +51,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     SearchComponent,
     LoginComponent,
     RegisterComponent,
-    FooterComponent
+    FooterComponent,
+    FavoritesComponent,
+    RecommendationsComponent
   ],
   imports: [
     BrowserModule,

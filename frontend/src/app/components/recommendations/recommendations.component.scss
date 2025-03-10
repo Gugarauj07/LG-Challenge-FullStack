@@ -1,0 +1,85 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+
+  .loading-text {
+    margin-top: 1rem;
+    color: #666;
+  }
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.no-recommendations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 3rem 1rem;
+  text-align: center;
+
+  .no-recommendations-icon {
+    font-size: 4rem;
+    height: 4rem;
+    width: 4rem;
+    color: #3f51b5;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: #666;
+    max-width: 500px;
+  }
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}

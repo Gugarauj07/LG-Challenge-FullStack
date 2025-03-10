@@ -64,3 +64,18 @@
     color: #3f51b5;
   }
 }
+
+.favorite-action {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+
+  button {
+    min-width: 200px;
+    padding: 8px 16px;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
