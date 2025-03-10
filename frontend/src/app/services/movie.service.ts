@@ -19,7 +19,7 @@ export class MovieService {
     });
   }
 
-  searchMovies(query: { title?: string, year?: number, genre?: string }): Observable<Movie[]> {
+  searchMovies(query: { title?: string, year?: number, genre?: string, genres?: string[] }): Observable<Movie[]> {
     let params = new HttpParams();
 
     if (query.title) {
@@ -30,8 +30,14 @@ export class MovieService {
       params = params.set('year', query.year.toString());
     }
 
-    if (query.genre) {
+    if (query.genre && !query.genres) {
       params = params.set('genre', query.genre);
+    }
+
+    if (query.genres && query.genres.length > 0) {
+      query.genres.forEach(genre => {
+        params = params.append('genres', genre);
+      });
     }
 
     return this.http.get<{items: Movie[], total: number}>(`${this.apiUrl}/search`, { params })

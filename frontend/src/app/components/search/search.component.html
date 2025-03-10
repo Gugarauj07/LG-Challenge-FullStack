@@ -37,13 +37,13 @@
             </div>
 
             <div class="filter-group">
-              <label>Gênero</label>
+              <label>Gêneros</label>
               <mat-form-field appearance="outline">
-                <mat-label>Selecione um gênero</mat-label>
-                <mat-select formControlName="genre">
-                  <mat-option value="">Todos os gêneros</mat-option>
+                <mat-label>Selecione os gêneros</mat-label>
+                <mat-select formControlName="genres" multiple>
                   <mat-option *ngFor="let genre of availableGenres" [value]="genre">{{ genre }}</mat-option>
                 </mat-select>
+                <mat-hint>Você pode selecionar múltiplos gêneros</mat-hint>
               </mat-form-field>
             </div>
 

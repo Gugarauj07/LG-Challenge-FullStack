@@ -16,11 +16,12 @@ def search_movies(
     title: Optional[str] = None,
     year: Optional[int] = None,
     genre: Optional[str] = None,
+    genres: Optional[List[str]] = Query(None),
     skip: int = 0,
     limit: int = 100,
 ) -> Any:
     """
-    Buscar filmes por título, ano e/ou gênero.
+    Buscar filmes por título, ano e/ou gênero(s).
     """
     query = db.query(models.Movie).options(joinedload(models.Movie.genres))
 
@@ -30,13 +31,18 @@ def search_movies(
     if year:
         query = query.filter(models.Movie.year == year)
 
-    if genre:
-        genre_obj = db.query(models.Genre).filter(models.Genre.name == genre).first()
-        if genre_obj:
-            query = query.filter(models.Movie.genres.any(models.Genre.id == genre_obj.id))
-        else:
-            # Se o gênero não existe, retorna uma lista vazia
-            return {"items": [], "total": 0}
+    # Para manter compatibilidade com versões anteriores, mantemos o suporte para um único gênero
+    if genre and not genres:
+        genres = [genre]
+
+    if genres:
+        for genre_name in genres:
+            genre_obj = db.query(models.Genre).filter(models.Genre.name == genre_name).first()
+            if genre_obj:
+                query = query.filter(models.Movie.genres.any(models.Genre.id == genre_obj.id))
+            else:
+                # Se um dos gêneros não existe, continuamos com os outros
+                continue
 
     total = query.count()
     movies = query.order_by(models.Movie.title).offset(skip).limit(limit).all()
