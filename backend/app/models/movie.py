@@ -25,6 +25,7 @@ class Movie(Base):
     genres = relationship("Genre", secondary=movie_genre, back_populates="movies")
     ratings = relationship("Rating", back_populates="movie")
     tags = relationship("Tag", back_populates="movie")
+    favorited_by = relationship("Favorite", back_populates="movie")
 
     @property
     def average_rating(self):

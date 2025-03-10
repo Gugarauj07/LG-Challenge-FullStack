@@ -6,3 +6,4 @@ from app.schemas.user import (
     User, UserCreate, UserUpdate, UserBase,
     Token, TokenPayload
 )
+from app.schemas.favorite import Favorite, FavoriteCreate, FavoriteUpdate

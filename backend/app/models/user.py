@@ -16,3 +16,4 @@ class User(Base):
     # Relacionamentos
     ratings = relationship("Rating", back_populates="user")
     tags = relationship("Tag", back_populates="user")
+    favorites = relationship("Favorite", back_populates="user")

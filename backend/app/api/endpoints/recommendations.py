@@ -19,26 +19,64 @@ def get_user_recommendations(
     limit: int = 10
 ) -> Any:
     """
-    Obtém recomendações de filmes para o usuário autenticado
+    Obtém recomendações de filmes para o usuário autenticado.
+    Prioriza recomendações baseadas nos favoritos do usuário,
+    mas também considera avaliações se disponíveis.
     """
-    # Verificar se o usuário tem avaliações suficientes
-    rating_count = db.query(models.Rating).filter(models.Rating.user_id == current_user.id).count()
-    if rating_count < 5:
-        raise HTTPException(
-            status_code=400,
-            detail="Você precisa avaliar pelo menos 5 filmes para receber recomendações personalizadas"
+    # Verificar se o usuário tem favoritos
+    favorite_count = db.query(models.Favorite).filter(models.Favorite.user_id == current_user.id).count()
+
+    if favorite_count > 0:
+        # Obter IDs dos filmes favoritos do usuário
+        favorite_movies = (
+            db.query(models.Movie)
+            .join(models.Favorite)
+            .filter(models.Favorite.user_id == current_user.id)
+            .all()
         )
 
-    # Obter recomendações para o usuário
-    movie_ids = get_recommendations_for_user(db, current_user.id, limit)
+        # Obter gêneros dos filmes favoritos
+        favorite_genres = set()
+        for movie in favorite_movies:
+            for genre in movie.genres:
+                favorite_genres.add(genre.id)
 
-    # Obter informações completas dos filmes recomendados
+        # Encontrar filmes semelhantes baseados nos gêneros favoritos, excluindo os já favoritados
+        favorite_movie_ids = [movie.id for movie in favorite_movies]
+        recommendations = (
+            db.query(models.Movie)
+            .join(movie_genre)
+            .filter(movie_genre.c.genre_id.in_(favorite_genres))
+            .filter(~models.Movie.id.in_(favorite_movie_ids))  # Excluir filmes já favoritados
+            .group_by(models.Movie.id)
+            .order_by(func.count().desc())  # Ordenar por número de gêneros em comum
+            .limit(limit)
+        ).all()
+
+        if recommendations:
+            return recommendations
+
+    # Se não há favoritos ou não conseguimos recomendações baseadas neles,
+    # verificar avaliações
+    rating_count = db.query(models.Rating).filter(models.Rating.user_id == current_user.id).count()
+    if rating_count < 5:
+        # Se não há avaliações suficientes, retornar filmes populares
+        popular_movies = (
+            db.query(models.Movie)
+            .join(models.Rating)
+            .group_by(models.Movie.id)
+            .order_by(func.avg(models.Rating.rating).desc())
+            .limit(limit)
+        ).all()
+        return popular_movies
+
+    # Se há avaliações suficientes, usar o método de recomendação colaborativa
+    movie_ids = get_recommendations_for_user(db, current_user.id, limit)
     movies = (
         db.query(models.Movie)
         .filter(models.Movie.id.in_(movie_ids))
         .all()
     )
-
     return movies
 
 @router.get("/similar/{movie_id}", response_model=List[schemas.Movie])
