@@ -6,7 +6,7 @@
   <mat-card-content>
     <div class="movie-genres">
       <mat-chip-set>
-        <mat-chip *ngFor="let genre of movie.genres.slice(0, 3)">{{ genre }}</mat-chip>
+        <mat-chip *ngFor="let genre of movie.genres.slice(0, 3)">{{ genre.name }}</mat-chip>
       </mat-chip-set>
     </div>
     <div class="movie-rating" *ngIf="movie.average_rating">
