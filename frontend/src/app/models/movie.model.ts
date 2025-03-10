@@ -2,7 +2,7 @@ export interface Movie {
   id: number;
   title: string;
   year?: number;
-  genres: string[];
+  genres: { name: string; id: number }[];
   average_rating?: number;
   rating_count?: number;
 }

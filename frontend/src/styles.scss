@@ -106,3 +106,17 @@ body {
   align-items: center;
   height: 200px;
 }
+
+/* Estilos para os componentes do Angular Material */
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-option {
+  white-space: normal !important;
+  line-height: 1.4 !important;
+}
+
+.mat-select-panel {
+  max-height: 400px !important;
+}

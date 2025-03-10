@@ -14,6 +14,13 @@ export class SearchComponent implements OnInit {
   movies: Movie[] = [];
   loading = false;
   searched = false;
+  showFilters = false;
+  availableGenres: string[] = [
+    'Action', 'Adventure', 'Animation', 'Children', 'Comedy',
+    'Crime', 'Documentary', 'Drama', 'Fantasy', 'Film-Noir',
+    'Horror', 'IMAX', 'Musical', 'Mystery', 'Romance',
+    'Sci-Fi', 'Thriller', 'War', 'Western'
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -36,20 +43,35 @@ export class SearchComponent implements OnInit {
           year: params['year'] || '',
           genre: params['genre'] || ''
         });
+
+        // Se tiver parâmetros de ano ou gênero, mostra automaticamente os filtros
+        if (params['year'] || params['genre']) {
+          this.showFilters = true;
+        }
+
         this.search();
       }
     });
   }
 
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
+
   search(): void {
+    // Não realizar busca se todos os campos estiverem vazios
+    const formValue = this.searchForm.value;
+    if (!formValue.title && !formValue.year && !formValue.genre) {
+      return;
+    }
+
     this.loading = true;
     this.searched = true;
 
     const query: any = {};
-    const formValue = this.searchForm.value;
 
     if (formValue.title) {
-      query.title = formValue.title;
+      query.title = formValue.title.trim();
     }
 
     if (formValue.year) {
@@ -68,6 +90,7 @@ export class SearchComponent implements OnInit {
       error: (err) => {
         console.error('Erro ao buscar filmes:', err);
         this.loading = false;
+        this.movies = [];
       }
     });
   }
@@ -76,5 +99,6 @@ export class SearchComponent implements OnInit {
     this.searchForm.reset();
     this.movies = [];
     this.searched = false;
+    this.showFilters = false;
   }
 }

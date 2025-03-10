@@ -1,56 +1,79 @@
-<div class="container">
-  <header class="page-header">
-    <h1>Buscar Filmes</h1>
-    <p>Encontre filmes por título, ano ou gênero</p>
-  </header>
+<div class="search-container">
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Descubra novos filmes</h1>
+      <p>Encontre os melhores filmes de todos os tempos</p>
 
-  <mat-card class="search-card">
-    <mat-card-content>
-      <form [formGroup]="searchForm" (ngSubmit)="search()">
-        <div class="search-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Título</mat-label>
-            <input matInput formControlName="title" placeholder="Ex: Pulp Fiction">
-          </mat-form-field>
+      <div class="search-bar-container">
+        <form [formGroup]="searchForm" (ngSubmit)="search()">
+          <div class="search-bar">
+            <div class="search-input">
+              <mat-icon>search</mat-icon>
+              <input type="text" placeholder="Buscar por título..." formControlName="title">
+            </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Ano</mat-label>
-            <input matInput formControlName="year" placeholder="Ex: 1994" type="number">
-          </mat-form-field>
+            <div class="search-filters">
+              <button type="button" mat-button (click)="toggleFilters()" class="filter-toggle">
+                <mat-icon>filter_list</mat-icon>
+                <span>Filtros</span>
+                <mat-icon class="arrow-icon">{{ showFilters ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+              </button>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Gênero</mat-label>
-            <input matInput formControlName="genre" placeholder="Ex: Drama">
-          </mat-form-field>
-        </div>
+              <button mat-flat-button color="primary" type="submit" [disabled]="loading" class="search-button">
+                <span *ngIf="!loading">Buscar</span>
+                <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+              </button>
+            </div>
+          </div>
 
-        <div class="search-actions">
-          <button mat-raised-button color="primary" type="submit">
-            <mat-icon>search</mat-icon>
-            Buscar
-          </button>
-          <button mat-button type="button" (click)="clearSearch()">
-            <mat-icon>clear</mat-icon>
-            Limpar
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+          <div class="advanced-filters" [class.show]="showFilters">
+            <div class="filter-group">
+              <label>Ano de lançamento</label>
+              <mat-form-field appearance="outline">
+                <mat-label>Ex: 1994</mat-label>
+                <input matInput type="number" formControlName="year" min="1900" max="2099">
+                <mat-icon matSuffix>date_range</mat-icon>
+              </mat-form-field>
+            </div>
 
-  <div class="loading-container" *ngIf="loading">
-    <mat-spinner diameter="40"></mat-spinner>
+            <div class="filter-group">
+              <label>Gênero</label>
+              <mat-form-field appearance="outline">
+                <mat-label>Selecione um gênero</mat-label>
+                <mat-select formControlName="genre">
+                  <mat-option value="">Todos os gêneros</mat-option>
+                  <mat-option *ngFor="let genre of availableGenres" [value]="genre">{{ genre }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <button type="button" mat-stroked-button (click)="clearSearch()" [disabled]="loading">
+              <mat-icon>refresh</mat-icon>
+              Limpar filtros
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <div class="search-results" *ngIf="searched && !loading">
-    <h2 *ngIf="movies.length > 0">Resultados da Busca ({{ movies.length }})</h2>
-    <div class="no-results" *ngIf="movies.length === 0">
-      <mat-icon>search_off</mat-icon>
-      <p>Nenhum filme encontrado com os critérios de busca informados.</p>
+  <div class="results-section" *ngIf="searched">
+    <div class="results-header" *ngIf="movies.length > 0">
+      <h2>Resultados da busca</h2>
+      <div class="results-info">
+        <span class="results-count">{{ movies.length }} filme(s) encontrado(s)</span>
+      </div>
     </div>
 
-    <div class="card-grid" *ngIf="movies.length > 0">
-      <app-movie-card *ngFor="let movie of movies" [movie]="movie"></app-movie-card>
+    <div class="no-results" *ngIf="movies.length === 0 && !loading">
+      <img src="assets/images/no-results.svg" alt="Sem resultados" class="no-results-image">
+      <h3>Nenhum filme encontrado</h3>
+      <p>Tente mudar os termos da busca ou remover filtros para encontrar o que procura.</p>
+      <button mat-flat-button color="primary" (click)="clearSearch()">Nova busca</button>
+    </div>
+
+    <div class="movies-grid" *ngIf="movies.length > 0">
+      <app-movie-card *ngFor="let movie of movies" [movie]="movie" class="movie-card-item"></app-movie-card>
     </div>
   </div>
 </div>

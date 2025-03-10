@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { Movie, MovieStats } from '../models/movie.model';
 import { environment } from '../../environments/environment';
@@ -34,7 +34,10 @@ export class MovieService {
       params = params.set('genre', query.genre);
     }
 
-    return this.http.get<Movie[]>(`${this.apiUrl}/search`, { params });
+    return this.http.get<{items: Movie[], total: number}>(`${this.apiUrl}/search`, { params })
+      .pipe(
+        map(response => response.items)
+      );
   }
 
   getMovieById(id: number): Observable<Movie> {
