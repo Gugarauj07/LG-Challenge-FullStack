@@ -1,0 +1,30 @@
+# Node.js e Angular
+frontend/node_modules
+frontend/.angular
+frontend/dist
+frontend/npm-debug.log
+frontend/yarn-error.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+backend/venv/
+backend/env/
+backend/.env
+backend/dist/
+backend/build/
+backend/htmlcov/
+backend/.pytest_cache/
+backend/.coverage
+
+# Ambiente de desenvolvimento
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
