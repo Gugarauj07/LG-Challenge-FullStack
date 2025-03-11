@@ -56,14 +56,15 @@ def search_movies(
 
     return {"items": movies, "total": total}
 
-@router.get("/top-rated", response_model=List[schemas.Movie])
+@router.get("/top-rated", response_model=schemas.MovieList)
 def get_top_rated_movies(
     *,
     db: Session = Depends(deps.get_db),
-    limit: int = Query(10, ge=1, le=100),
+    skip: int = 0,
+    limit: int = 10,
 ) -> Any:
     """
-    Retorna os K filmes mais bem avaliados.
+    Retorna os filmes mais bem avaliados com suporte à paginação.
     """
     # Subconsulta para calcular a média de avaliações por filme
     subquery = (
@@ -76,6 +77,15 @@ def get_top_rated_movies(
         .subquery()
     )
 
+    # Consulta para obter o total de filmes que atendem aos critérios
+    count_query = (
+        db.query(func.count())
+        .select_from(models.Movie)
+        .join(subquery, models.Movie.id == subquery.c.movie_id)
+        .filter(subquery.c.rating_count >= 5)
+    )
+    total = count_query.scalar() or 0
+
     # Consulta principal para obter os filmes mais bem avaliados
     # com um mínimo de 5 avaliações
     query = (
@@ -84,10 +94,11 @@ def get_top_rated_movies(
         .filter(subquery.c.rating_count >= 5)
         .options(joinedload(models.Movie.genres))
         .order_by(desc(subquery.c.avg_rating))
+        .offset(skip)
         .limit(limit)
     )
 
-    return query.all()
+    return {"items": query.all(), "total": total}
 
 @router.get("/by-id/{movie_id}", response_model=schemas.Movie)
 def get_movie_by_id(

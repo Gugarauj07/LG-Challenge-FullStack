@@ -27,9 +27,13 @@ export class MovieListComponent implements OnInit {
 
   loadMovies(): void {
     this.loading = true;
-    this.movieService.getTopRated(this.pageSize).subscribe({
-      next: (movies) => {
-        this.movies = movies;
+
+    const skip = this.currentPage * this.pageSize;
+
+    this.movieService.getTopRated(skip, this.pageSize).subscribe({
+      next: (response) => {
+        this.movies = response.items;
+        this.totalMovies = response.total;
         this.loading = false;
       },
       error: (err) => {

@@ -13,15 +13,18 @@ export class MovieService {
 
   constructor(private http: HttpClient) { }
 
-  getTopRated(limit: number = 10): Observable<Movie[]> {
-    return this.http.get<Movie[]>(`${this.apiUrl}/top-rated`, {
-      params: new HttpParams().set('limit', limit.toString())
-    }).pipe(
-      catchError(error => {
-        console.error('Erro ao carregar filmes mais bem avaliados:', error);
-        return of([]);
-      })
-    );
+  getTopRated(skip: number = 0, limit: number = 10): Observable<{items: Movie[], total: number}> {
+    let params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<{items: Movie[], total: number}>(`${this.apiUrl}/top-rated`, { params })
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao carregar filmes mais bem avaliados:', error);
+          return of({items: [], total: 0});
+        })
+      );
   }
 
   searchMovies(query: {

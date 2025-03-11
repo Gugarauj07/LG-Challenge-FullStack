@@ -45,9 +45,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadTopMovies(): void {
-    this.movieService.getTopRated(6).subscribe({
-      next: (movies) => {
-        this.topMovies = movies;
+    this.movieService.getTopRated(0, 6).subscribe({
+      next: (response) => {
+        this.topMovies = response.items;
         this.loading = false;
       },
       error: (err) => {
