@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../../services/movie.service';
 import { Movie } from '../../models/movie.model';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-search',
@@ -21,6 +22,12 @@ export class SearchComponent implements OnInit {
     'Horror', 'IMAX', 'Musical', 'Mystery', 'Romance',
     'Sci-Fi', 'Thriller', 'War', 'Western'
   ];
+
+  // Paginação
+  pageSize = 12;
+  pageSizeOptions = [6, 12, 24, 48];
+  totalMovies = 0;
+  currentPage = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -49,11 +56,25 @@ export class SearchComponent implements OnInit {
 
       // Verifica se há múltiplos gêneros na URL
       if (params['genres']) {
+        // Prevenir duplicação processando os gêneros apenas uma vez
         if (Array.isArray(params['genres'])) {
-          genres = genres.concat(params['genres']);
+          // Usar Set para garantir valores únicos
+          genres = [...new Set([...genres, ...params['genres']])];
         } else {
-          genres.push(params['genres']);
+          // Se for uma string, adiciona apenas se não for duplicata
+          if (!genres.includes(params['genres'])) {
+            genres.push(params['genres']);
+          }
         }
+      }
+
+      // Verificar se há parâmetros de paginação
+      if (params['page']) {
+        this.currentPage = parseInt(params['page'], 10);
+      }
+
+      if (params['pageSize']) {
+        this.pageSize = parseInt(params['pageSize'], 10);
       }
 
       if (title || year || genres.length > 0) {
@@ -101,20 +122,27 @@ export class SearchComponent implements OnInit {
       query.genres = formValue.genres;
     }
 
+    // Adicionar parâmetros de paginação
+    query.skip = this.currentPage * this.pageSize;
+    query.limit = this.pageSize;
+
     // Atualizar URL com os parâmetros de busca
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
         title: formValue.title || null,
         year: formValue.year || null,
-        genres: formValue.genres && formValue.genres.length > 0 ? formValue.genres : null
+        genres: formValue.genres && formValue.genres.length > 0 ? formValue.genres : null,
+        page: this.currentPage || null,
+        pageSize: this.pageSize || null
       },
       queryParamsHandling: 'merge'
     });
 
     this.movieService.searchMovies(query).subscribe({
-      next: (movies) => {
-        this.movies = movies;
+      next: (response) => {
+        this.movies = response.items;
+        this.totalMovies = response.total;
         this.loading = false;
       },
       error: (err) => {
@@ -123,6 +151,12 @@ export class SearchComponent implements OnInit {
         this.movies = [];
       }
     });
+  }
+
+  handlePageEvent(event: PageEvent): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.search();
   }
 
   clearSearch(): void {
@@ -134,6 +168,7 @@ export class SearchComponent implements OnInit {
     this.movies = [];
     this.searched = false;
     this.showFilters = false;
+    this.currentPage = 0;
 
     // Limpar parâmetros da URL
     this.router.navigate([], {

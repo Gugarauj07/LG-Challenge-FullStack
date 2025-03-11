@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 
 import { Movie, MovieStats } from '../models/movie.model';
 import { environment } from '../../environments/environment';
@@ -16,10 +16,22 @@ export class MovieService {
   getTopRated(limit: number = 10): Observable<Movie[]> {
     return this.http.get<Movie[]>(`${this.apiUrl}/top-rated`, {
       params: new HttpParams().set('limit', limit.toString())
-    });
+    }).pipe(
+      catchError(error => {
+        console.error('Erro ao carregar filmes mais bem avaliados:', error);
+        return of([]);
+      })
+    );
   }
 
-  searchMovies(query: { title?: string, year?: number, genre?: string, genres?: string[] }): Observable<Movie[]> {
+  searchMovies(query: {
+    title?: string,
+    year?: number,
+    genre?: string,
+    genres?: string[],
+    skip?: number,
+    limit?: number
+  }): Observable<{items: Movie[], total: number}> {
     let params = new HttpParams();
 
     if (query.title) {
@@ -35,22 +47,53 @@ export class MovieService {
     }
 
     if (query.genres && query.genres.length > 0) {
-      query.genres.forEach(genre => {
+      const uniqueGenres = [...new Set(query.genres)];
+      uniqueGenres.forEach(genre => {
         params = params.append('genres', genre);
       });
     }
 
+    if (query.skip !== undefined) {
+      params = params.set('skip', query.skip.toString());
+    }
+
+    if (query.limit !== undefined) {
+      params = params.set('limit', query.limit.toString());
+    }
+
     return this.http.get<{items: Movie[], total: number}>(`${this.apiUrl}/search`, { params })
       .pipe(
-        map(response => response.items)
+        catchError(error => {
+          console.error('Erro ao buscar filmes:', error);
+          return of({items: [], total: 0});
+        })
       );
   }
 
   getMovieById(id: number): Observable<Movie> {
-    return this.http.get<Movie>(`${this.apiUrl}/by-id/${id}`);
+    return this.http.get<Movie>(`${this.apiUrl}/by-id/${id}`)
+      .pipe(
+        catchError(error => {
+          console.error(`Erro ao carregar filme ${id}:`, error);
+          return of({} as Movie);
+        })
+      );
   }
 
   getMovieStats(): Observable<MovieStats> {
-    return this.http.get<MovieStats>(`${this.apiUrl}/stats`);
+    // Implementar um timeout mais longo para operações pesadas de estatísticas
+    return this.http.get<MovieStats>(`${this.apiUrl}/stats`)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao carregar estatísticas:', error);
+          // Retornar um objeto de estatísticas vazio em caso de erro
+          return of({
+            total_movies: 0,
+            total_ratings: 0,
+            average_rating: 0,
+            top_genres: []
+          });
+        })
+      );
   }
 }

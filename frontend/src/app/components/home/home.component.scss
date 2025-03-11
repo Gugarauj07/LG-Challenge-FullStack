@@ -101,13 +101,63 @@
   .genre-button {
     margin-bottom: 8px;
   }
+
+  .empty-genres {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0;
+      color: #6c757d;
+      font-size: 1rem;
+    }
+  }
+}
+
+.recommendations-section, .top-movies-section {
+  margin-bottom: 3rem;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .no-recommendations {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0;
+      color: #6c757d;
+      font-size: 1rem;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
 }
 
 .error-message {
-  text-align: center;
-  color: #f44336;
-  padding: 20px;
-  background-color: #ffebee;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
   border-radius: 4px;
-  margin: 20px 0;
+  margin-bottom: 1rem;
 }

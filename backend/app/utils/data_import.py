@@ -37,6 +37,34 @@ def import_movies(db: Session, movies_file: str) -> Dict[int, int]:
     # Mapear movie_id original para id do banco
     movie_id_map = {}
 
+    # Certificar-se que temos gêneros básicos no sistema caso o arquivo esteja vazio
+    default_genres = [
+        "Action", "Adventure", "Animation", "Children", "Comedy",
+        "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir",
+        "Horror", "IMAX", "Musical", "Mystery", "Romance",
+        "Sci-Fi", "Thriller", "War", "Western"
+    ]
+
+    print("Verificando gêneros existentes...")
+    for genre_name in default_genres:
+        # Verificar se o gênero já existe
+        genre = db.query(models.Genre).filter(models.Genre.name == genre_name).first()
+        if not genre:
+            print(f"Criando gênero padrão: {genre_name}")
+            genre = models.Genre(name=genre_name)
+            db.add(genre)
+
+    # Commit para salvar os gêneros padrão
+    db.commit()
+    print("Gêneros padrão verificados")
+
+    # Carregar todos os gêneros em um dicionário para uso posterior
+    all_genres = db.query(models.Genre).all()
+    for genre in all_genres:
+        genre_map[genre.name] = genre
+
+    print(f"Total de gêneros carregados: {len(genre_map)}")
+
     with open(movies_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
 
@@ -53,14 +81,17 @@ def import_movies(db: Session, movies_file: str) -> Dict[int, int]:
                     continue
 
                 if genre_name not in genre_map:
+                    # Tentar obter do banco, caso tenha sido adicionado em outra iteração
                     genre = db.query(models.Genre).filter(models.Genre.name == genre_name).first()
                     if not genre:
+                        print(f"Criando novo gênero: {genre_name}")
                         genre = models.Genre(name=genre_name)
                         db.add(genre)
                         db.flush()  # Para obter o ID
                     genre_map[genre_name] = genre
 
-                genre_objects.append(genre_map[genre_name])
+                if genre_name in genre_map:
+                    genre_objects.append(genre_map[genre_name])
 
             # Verificar se o filme já existe
             movie = db.query(models.Movie).filter(models.Movie.movie_id == int(row['movieId'])).first()

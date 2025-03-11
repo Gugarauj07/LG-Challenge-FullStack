@@ -61,7 +61,7 @@
     <div class="results-header" *ngIf="movies.length > 0">
       <h2>Resultados da busca</h2>
       <div class="results-info">
-        <span class="results-count">{{ movies.length }} filme(s) encontrado(s)</span>
+        <span class="results-count">{{ totalMovies }} filme(s) encontrado(s)</span>
       </div>
     </div>
 
@@ -75,5 +75,15 @@
     <div class="movies-grid" *ngIf="movies.length > 0">
       <app-movie-card *ngFor="let movie of movies" [movie]="movie" class="movie-card-item"></app-movie-card>
     </div>
+
+    <mat-paginator
+      *ngIf="movies.length > 0"
+      [length]="totalMovies"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      (page)="handlePageEvent($event)"
+      aria-label="Selecione a página">
+    </mat-paginator>
   </div>
 </div>

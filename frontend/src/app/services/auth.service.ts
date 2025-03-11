@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, catchError } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { User, UserLogin, UserRegister, Token } from '../models/user.model';
@@ -24,11 +24,15 @@ export class AuthService {
   private checkToken(): void {
     const token = localStorage.getItem('token');
     if (token) {
-      this.getProfile().subscribe({
-        next: user => this.currentUserSubject.next(user),
-        error: () => {
+      this.getProfile().pipe(
+        // Se der erro, apenas limpa o token e retorna null, mas não causa redirecionamento
+        catchError(() => {
           localStorage.removeItem('token');
-          this.currentUserSubject.next(null);
+          return of(null);
+        })
+      ).subscribe(user => {
+        if (user) {
+          this.currentUserSubject.next(user);
         }
       });
     }

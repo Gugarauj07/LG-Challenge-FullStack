@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of, catchError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { Movie } from '../models/movie.model';
@@ -15,38 +15,62 @@ export class FavoritesService {
   public favorites$ = this.favoritesSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.loadFavorites();
+    // Só carrega favoritos se houver um token
+    if (localStorage.getItem('token')) {
+      this.loadFavorites();
+    }
   }
 
   // Carregar favoritos do usuário
   loadFavorites(): void {
-    this.http.get<Movie[]>(this.apiUrl).subscribe({
-      next: (favorites) => {
+    this.http.get<Movie[]>(this.apiUrl)
+      .pipe(
+        catchError(err => {
+          console.error('Erro ao carregar favoritos:', err);
+          return of([]);
+        })
+      )
+      .subscribe(favorites => {
         this.favoritesSubject.next(favorites);
-      },
-      error: (err) => {
-        console.error('Erro ao carregar favoritos:', err);
-      }
-    });
+      });
   }
 
   // Obter favoritos
   getFavorites(): Observable<Movie[]> {
-    return this.http.get<Movie[]>(this.apiUrl);
+    return this.http.get<Movie[]>(this.apiUrl)
+      .pipe(
+        tap(favorites => {
+          this.favoritesSubject.next(favorites);
+        }),
+        catchError(err => {
+          console.error('Erro ao obter favoritos:', err);
+          return of([]);
+        })
+      );
   }
 
   // Adicionar filme aos favoritos
   addToFavorites(movieId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${movieId}`, {}).pipe(
-      tap(() => this.loadFavorites())
-    );
+    return this.http.post(`${this.apiUrl}/${movieId}`, {})
+      .pipe(
+        tap(() => this.loadFavorites()),
+        catchError(err => {
+          console.error('Erro ao adicionar favorito:', err);
+          return of(null);
+        })
+      );
   }
 
   // Remover filme dos favoritos
   removeFromFavorites(movieId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${movieId}`).pipe(
-      tap(() => this.loadFavorites())
-    );
+    return this.http.delete(`${this.apiUrl}/${movieId}`)
+      .pipe(
+        tap(() => this.loadFavorites()),
+        catchError(err => {
+          console.error('Erro ao remover favorito:', err);
+          return of(null);
+        })
+      );
   }
 
   // Verificar se um filme está nos favoritos
