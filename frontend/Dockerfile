@@ -27,16 +27,16 @@ ENV PORT=8080
 COPY --from=build /app/dist/movielens-app /usr/share/nginx/html
 
 # Copiar configuração personalizada do Nginx
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Script para substituir a variável PORT no arquivo de configuração do Nginx e iniciar
-RUN echo '#!/bin/sh \n\
-envsubst \${PORT} < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf \n\
-nginx -g "daemon off;"' > /docker-entrypoint.sh && \
-chmod +x /docker-entrypoint.sh
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'echo "Iniciando o Nginx..."' >> /docker-entrypoint.sh && \
+    echo 'exec nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
 
-# Expor a porta dinâmica
-EXPOSE ${PORT}
+# Expor a porta 8080
+EXPOSE 8080
 
 # Usar o script de entrada personalizado
 CMD ["/docker-entrypoint.sh"]

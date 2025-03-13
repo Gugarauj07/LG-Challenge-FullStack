@@ -91,10 +91,16 @@ if [ "$FRONTEND_FAILED" != "true" ]; then
         --platform=managed \
         --region=$REGION \
         --set-env-vars="API_URL=${BACKEND_URL}/api" \
-        --allow-unauthenticated
+        --allow-unauthenticated \
+        --timeout=30s \
+        --memory=512Mi \
+        --cpu=1 \
+        --port=8080
 
     if [ $? -ne 0 ]; then
         echo -e "${RED}Falha ao implantar o frontend no Cloud Run.${NC}"
+        echo -e "${YELLOW}Verificando logs do frontend...${NC}"
+        gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=movielens-frontend" --limit 20
         FRONTEND_FAILED=true
     else
         # 9. Obter a URL do frontend
