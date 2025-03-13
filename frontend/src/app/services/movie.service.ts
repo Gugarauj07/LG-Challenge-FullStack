@@ -4,14 +4,21 @@ import { Observable, map, catchError, of } from 'rxjs';
 
 import { Movie, MovieStats } from '../models/movie.model';
 import { environment } from '../../environments/environment';
+import { ApiConfigService } from './api-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
-  private apiUrl = `${environment.apiUrl}/movies`;
+  private apiUrl: string;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private apiConfigService: ApiConfigService
+  ) {
+    this.apiUrl = `${this.apiConfigService.getApiUrl()}/movies`;
+    console.log('MovieService usando API URL:', this.apiUrl);
+  }
 
   getTopRated(skip: number = 0, limit: number = 10): Observable<{items: Movie[], total: number}> {
     let params = new HttpParams()

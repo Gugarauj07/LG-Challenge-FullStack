@@ -5,16 +5,22 @@ import { tap } from 'rxjs/operators';
 
 import { Movie } from '../models/movie.model';
 import { environment } from '../../environments/environment';
+import { ApiConfigService } from './api-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritesService {
-  private apiUrl = `${environment.apiUrl}/favorites`;
+  private apiUrl: string;
   private favoritesSubject = new BehaviorSubject<Movie[]>([]);
   public favorites$ = this.favoritesSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private apiConfigService: ApiConfigService
+  ) {
+    this.apiUrl = `${this.apiConfigService.getApiUrl()}/favorites`;
+    console.log('FavoritesService usando API URL:', this.apiUrl);
     // Só carrega favoritos se houver um token
     if (localStorage.getItem('token')) {
       this.loadFavorites();

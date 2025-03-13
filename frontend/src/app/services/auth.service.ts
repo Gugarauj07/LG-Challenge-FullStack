@@ -5,19 +5,24 @@ import { Router } from '@angular/router';
 
 import { User, UserLogin, UserRegister, Token } from '../models/user.model';
 import { environment } from '../../environments/environment';
+import { ApiConfigService } from './api-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl: string;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser = this.currentUserSubject.asObservable();
+  private readonly TOKEN_KEY = 'auth_token';
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private apiConfigService: ApiConfigService
   ) {
+    this.apiUrl = `${this.apiConfigService.getApiUrl()}/auth`;
+    console.log('AuthService usando API URL:', this.apiUrl);
     this.checkToken();
   }
 

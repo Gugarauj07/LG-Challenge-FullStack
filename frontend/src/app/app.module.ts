@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -40,6 +40,17 @@ import { RecommendationsComponent } from './components/recommendations/recommend
 // Interceptors
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
+// Services
+import { ApiConfigService } from './services/api-config.service';
+
+// Factory para inicializar a configuração da API
+export function initializeApp(apiConfigService: ApiConfigService) {
+  return () => {
+    console.log('Inicializando configuração da API');
+    return apiConfigService.getApiUrl(); // Isso força a inicialização do serviço
+  };
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -80,7 +91,13 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     MatDividerModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ApiConfigService],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

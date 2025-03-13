@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api/v1' // Usando o proxy configurado no nginx
+  // URL absoluta do backend no Cloud Run
+  apiUrl: 'https://movielens-backend-d6sxdenlgq-uc.a.run.app/api/v1'
 };

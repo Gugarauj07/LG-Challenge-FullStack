@@ -60,6 +60,7 @@ cd ..
 
 echo "Construindo imagem do frontend..."
 cd frontend
+# Não precisamos mais da configuração manual, pois está hardcoded no environment.prod.ts
 gcloud builds submit --tag $FRONTEND_IMAGE . --timeout=15m
 if [ $? -ne 0 ]; then
     echo -e "${YELLOW}Aviso: Houve problemas ao construir a imagem do frontend.${NC}"
@@ -79,7 +80,7 @@ gcloud run deploy movielens-backend \
     --allow-unauthenticated
 check_error "Falha ao implantar o backend no Cloud Run"
 
-# 7. Obter a URL do backend para configurar o frontend
+# 7. Obter a URL do backend
 BACKEND_URL=$(gcloud run services describe movielens-backend --platform=managed --region=$REGION --format="value(status.url)")
 echo "Backend implantado em: $BACKEND_URL"
 
@@ -90,7 +91,6 @@ if [ "$FRONTEND_FAILED" != "true" ]; then
         --image=$FRONTEND_IMAGE \
         --platform=managed \
         --region=$REGION \
-        --set-env-vars="API_URL=${BACKEND_URL}/api" \
         --allow-unauthenticated \
         --timeout=30s \
         --memory=512Mi \
