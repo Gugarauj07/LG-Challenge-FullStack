@@ -1,12 +1,18 @@
 # MovieLens - Sistema de Recomendação de Filmes
 
-Este projeto implementa um sistema completo de recomendação de filmes utilizando o dataset MovieLens. O sistema consiste em um backend em FastAPI que processa os dados e disponibiliza endpoints REST, e um frontend em Angular que permite aos usuários interagir com esses dados de forma intuitiva.
-
 ## 📌 Links de Deploy
 
 - **Frontend:** [https://movielens-frontend-d6sxdenlgq-uc.a.run.app](https://movielens-frontend-d6sxdenlgq-uc.a.run.app)
 - **Backend API:** [https://movielens-backend-d6sxdenlgq-uc.a.run.app](https://movielens-backend-d6sxdenlgq-uc.a.run.app)
 - **API Docs (Swagger):** [https://movielens-backend-d6sxdenlgq-uc.a.run.app/docs](https://movielens-backend-d6sxdenlgq-uc.a.run.app/docs)
+
+## ⚠️ Aviso Importante sobre o Deploy
+
+O sistema implantado no Google Cloud Run não está totalmente funcional no momento. Devido a limitações de tempo e configuração, o download automático do dataset MovieLens não está funcionando corretamente no ambiente de deploy.
+
+Como o processo de deploy no Cloud Run demora um tempo considerável, não foi possível finalizar a implementação desta funcionalidade específica antes do prazo. O sistema funciona perfeitamente em ambiente local (via Docker ou execução direta), onde o download e processamento do dataset ocorrem automaticamente.
+
+Para uma experiência completa, recomendo executar o projeto localmente seguindo as instruções abaixo.
 
 ## 📌 Guia de Instalação e Uso
 
@@ -33,7 +39,7 @@ docker-compose up --build -d
 ```
 
 Após a inicialização, acesse:
-- Frontend: http://localhost:4200
+- Frontend: http://localhost/home
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
 
@@ -56,19 +62,6 @@ cd frontend
 npm install
 ng serve
 ```
-
-Acesse o frontend em: http://localhost:4200
-
-### Deploy no Google Cloud Run
-
-O projeto inclui um script de deploy automático para o Google Cloud Run:
-
-```bash
-# Certifique-se de ter o Google Cloud SDK instalado e configurado
-chmod +x deploy-cloud-run.sh
-./deploy-cloud-run.sh
-```
-
 ## 📌 Explicação Técnica
 
 ### Arquitetura do Sistema
@@ -89,6 +82,10 @@ O projeto utiliza uma arquitetura de microsserviços, com frontend e backend des
   - Pydantic para validação de dados e schemas
   - Integração com scikit-learn para algoritmos de recomendação
 
+### Escolha do FastAPI para o Backend
+
+Um dos principais diferenciais que motivou a escolha do FastAPI para este projeto de recomendação de filmes foi sua integração perfeita com ecossistemas de ciência de dados. O FastAPI permite importar e utilizar bibliotecas como scikit-learn, pandas e NumPy diretamente no código da API, sem necessidade de microsserviços separados para processamento de dados ou inferência de modelos. Esta característica é especialmente valiosa para sistemas de recomendação, que dependem de algoritmos estatísticos e processamento de dados em tempo real.
+
 ### Processamento de Dados
 
 - Os dados do MovieLens são processados durante a inicialização do aplicativo
@@ -98,55 +95,13 @@ O projeto utiliza uma arquitetura de microsserviços, com frontend e backend des
 
 ### Sistema de Recomendação
 
-O sistema implementa dois tipos de recomendação:
+O sistema de recomendação implementado combina técnicas avançadas de machine learning para oferecer sugestões personalizadas aos usuários. Ao invés de utilizar uma única abordagem, o sistema integra duas metodologias complementares que trabalham em conjunto para gerar recomendações mais precisas e diversificadas.
 
-1. **Filtragem Colaborativa**
-   - Recomendações baseadas no comportamento de usuários semelhantes
-   - Utiliza matriz de similaridade de cosseno para identificar padrões
+A primeira metodologia implementada é a Filtragem Colaborativa, que funciona sob o princípio de que usuários com históricos de preferências semelhantes provavelmente terão gostos similares no futuro. O algoritmo analisa padrões nas avaliações de milhares de usuários para identificar estas similaridades. Utilizando técnicas de álgebra linear, especificamente a similaridade de cosseno entre vetores de avaliações, o sistema consegue identificar usuários com perfis semelhantes e recomendar filmes que foram bem avaliados por estes "vizinhos próximos", mas que ainda não foram vistos pelo usuário atual. Esta abordagem é particularmente eficaz para descobrir conteúdo que talvez não seja óbvio baseado apenas nos gêneros preferidos do usuário.
 
-2. **Filtragem Baseada em Conteúdo**
-   - Recomendações baseadas em características dos filmes (gêneros, atores, etc.)
-   - Utiliza TF-IDF para análise de similaridade entre filmes
+Complementarmente, o sistema também emprega a Filtragem Baseada em Conteúdo, que analisa as características intrínsecas dos filmes – como gêneros, diretores, atores e palavras-chave – para identificar similaridades temáticas e estilísticas entre obras. Esta técnica utiliza representações vetoriais das características dos filmes, processadas através do algoritmo TF-IDF (Term Frequency-Inverse Document Frequency), que pondera a importância relativa de cada atributo. Quando um usuário demonstra interesse por determinados filmes, o sistema consegue recomendar obras com perfil semelhante, mesmo que estas não tenham sido avaliadas por muitos usuários, contornando assim o problema de "cold start" comum em sistemas baseados apenas em filtragem colaborativa.
 
-### Segurança
-
-- Autenticação JWT para proteção de endpoints sensíveis
-- Hashing de senhas com bcrypt
-- CORS configurado para aceitar apenas origens específicas
-- Rate limiting para prevenir ataques de força bruta
-
-### Implantação e DevOps
-
-- Containerização com Docker para garantir consistência entre ambientes
-- CI/CD com GitHub Actions (opcional)
-- Deploy no Google Cloud Run para escalabilidade automática
-- Nginx como proxy reverso para o frontend
-
-## 📌 Principais Desafios e Soluções
-
-### Problema de Cross-Origin em Produção
-
-Um dos principais desafios foi configurar corretamente o proxy reverso no Nginx para o ambiente de produção. A solução implementada:
-
-1. Configuração do environment.prod.ts para apontar para a URL absoluta da API em produção
-2. Simplificação do ApiConfigService para usar diretamente o valor do environment.ts
-3. Configuração do Nginx para servir a aplicação Angular corretamente
-
-### Otimização de Consultas
-
-Para garantir boa performance mesmo com grande volume de dados:
-
-1. Índices estrategicamente criados nas colunas mais consultadas
-2. Consultas SQL otimizadas com joins eficientes
-3. Paginação implementada em todos os endpoints que retornam listas
-
-### Gestão de Estado no Frontend
-
-Implementamos um serviço de estado global usando RxJS para:
-
-1. Compartilhar dados entre componentes sem prop drilling
-2. Armazenar em cache resultados de consultas frequentes
-3. Gerenciar o estado de autenticação e informações do usuário
+A combinação destas duas abordagens permite que o sistema ofereça recomendações mais robustas e contextualizadas, equilibrando a descoberta de novos conteúdos com a precisão baseada em preferências já expressas pelo usuário. Os algoritmos são executados de forma eficiente graças à integração com a biblioteca scikit-learn, que implementa versões otimizadas destes métodos de aprendizado de máquina.
 
 ## 📌 Melhorias Futuras
 
@@ -167,39 +122,3 @@ Implementamos um serviço de estado global usando RxJS para:
    - Permitir que usuários compartilhem listas e recomendações
    - Criar grupos de discussão sobre filmes
 
-### Técnicas
-
-1. **Migração para GraphQL**
-   - Implementar GraphQL para consultas mais flexíveis e eficientes
-   - Reduzir o overfetching e underfetching de dados
-
-2. **Cache Distribuído**
-   - Implementar Redis para cache distribuído e melhorar a performance
-   - Armazenar resultados de consultas frequentes e sessões de usuário
-
-3. **Testes Automatizados Abrangentes**
-   - Aumentar a cobertura de testes unitários e de integração
-   - Implementar testes end-to-end com Cypress ou Playwright
-
-4. **Análise de Telemetria**
-   - Implementar logging estruturado e monitoramento com ELK Stack ou similar
-   - Rastrear padrões de uso para otimizar a experiência do usuário
-
-5. **Progressive Web App (PWA)**
-   - Converter o frontend para PWA para permitir uso offline e melhorar a experiência móvel
-
-## 📌 Como Contribuir
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Push para a branch (`git push origin feature/nova-funcionalidade`)
-5. Abra um Pull Request
-
-## 📌 Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
-
-## 📌 Contato
-
-Gustavo Araujo - [@Gugarauj07](https://github.com/Gugarauj07)
